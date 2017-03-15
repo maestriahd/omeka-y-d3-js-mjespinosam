@@ -22,6 +22,7 @@ function viz(data){
   var elem = svg.selectAll('g') // selecciona todos los elementos `g` (grupos)
     .data(data) // enlaza los datos del servidor
 
+
   var elemEnter = elem.enter()
       .append('g') // agrega un grupo
       .attr('transform', function(d,i){ // aplica una transformación al elemento
@@ -34,14 +35,14 @@ function viz(data){
     .attr('fill', function(d){ // el color de relleno se aplica según el
                                // resultado de esta función
       if(d.public){     // si el elemento actual es público
-        return 'green'  // el color de relleno será verde
+        return 'blue'  // el color de relleno será verde
       } else {          // de lo contrario (será público)
-        return 'red'    // el color de relleno será rojo
+        return 'green'    // el color de relleno será rojo
       }
     })
 
     .attr('r', function(d){ // el radio dependerá de la cantidad de items en la
-      return d.items.count * 10 // colección
+      return d.items.count * 4 // colección
     })
 
   // crea los textos etiquetando cada uno de los círculos
@@ -49,7 +50,7 @@ function viz(data){
     .attr('dy', -35) // la posición en y
     .attr('dx', -20) // la posición en x
     .text(function(d){ // extrae el texto de la información del servidor
-      return d.element_texts[0].text
+      return d.element_texts[6].text
     })
 
 }
