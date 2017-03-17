@@ -1,0 +1,107 @@
+<h1> items con D3</h1>
+
+<!-- div donde se inyectará la visualizción de D3js -->
+<div id="viz"></div>
+
+<!-- carga desde el servidor de D3 la librería -->
+<!-- cabe anotar que esta podría estar alojada localmente en la carpeta -->
+<!-- public del proyecto -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<!-- script de JS que hace las peticiones al servidor y crea la visualización-->
+<script type="text/javascript">
+
+// Función encargadad de la visualización de datos por medio de D3
+function viz(data){
+
+  // selecciona la división donde se inyectará el SVG
+  var svg = d3.select('#viz')
+    .append('svg') // agrega un elemento SVG
+    .attr('width', 1500) // al SVG le agrega el atributo ancho de 400px
+    .attr('height', 1000) // al SVG le agrega el atributo alto de 200px
+
+  var elem = svg.selectAll('g') // selecciona todos los elementos `g` (grupos)
+    .data(data) // enlaza los datos del servidor
+
+
+  var elemEnter = elem.enter()
+      .append('g') // agrega un grupo
+      .attr('transform', function(d,i){ // aplica una transformación al elemento
+        return "translate("+(80*i+60)+", 80)" // calcula la posción relativo a
+                                              // los datos
+      })
+      // el elemeEnter es el grupo y le voy pidendo cositas
+var rect= elemEnter.append('rect')
+.attr('x', '100')
+.attr('y', '100')
+.attr('fill', 'black')
+.attr('stroke', 'white')
+.attr('width', '100')
+.attr('height', '120')
+var txt = elemEnter.append('text')
+.text(function (d){
+  var tags = d.tags
+  var taglist = ''
+  tags.forEach (function (tag){
+    taglist = taglist + tag.name + ', '
+    
+  })
+  return taglist
+})
+
+}
+
+// Rutina para hacer la petición al servidor de Omeka
+// 1. crea una nueva instancia de XMLHttpRequest
+var request = new XMLHttpRequest();
+// variables para construir la URL final para donde se hace la petición
+// servidor proxy para souclionar problemas de CORS (ver README)
+var CORS_PROXY = 'http://192.169.250.12:8088/';
+// usa el proxy?
+var use_cors = true;
+//la URL del API (http://miomeka.org/api)
+var baseUrl = 'http://visionesdeamerica.omeka.net/api'
+// el key generado por omeka
+var API_KEY = '2474132a4544266e8e227e862d420afea276f5af'
+
+// comstruye la URL final a partir de los datos suministrados anteriormente
+var URL = '' // variable donde se guardará la URL final
+// Si va a usar el proxy
+if (use_cors){
+  // concatena todas las variables
+  // http://192.169.250.12:8088/http://miomeka.org/api/collections?key=API_KEY
+  URL = CORS_PROXY+baseUrl+'/items?key='+API_KEY
+// si no usa el proxy
+} else {
+  // concatena todas las variables
+  // http://miomeka.org/api/collections?key=API_KEY
+  URL = baseUrl+'/items?key='+API_KEY
+}
+
+// 2. abre una conexión al servidor usando el método GET
+// la URL debe estar construida así:
+request.open('GET', URL, true);
+
+// cuando se ejecuta la conexión con el servidor y obtenemos respuesta
+request.onload = function() {
+  // si la petición se ejecuta correctamente
+  if (request.status >= 200 && request.status < 400) {
+    // convertimos la repuesta del servidor en un objeto JSON
+    var resp = JSON.parse(request.responseText);
+    // ejecuta la función de visualizacion
+    viz(resp)
+  } else {
+    // si hay un error en la conexión, escribe en la consola el error
+    console.log('ups! tenemos un error', request.status)
+  }
+};
+
+// si hay un error, este evento se ejecuta para informar que algo pasó
+request.onerror = function() {
+  // algo pasó en el intento de conexión
+  console.log('Error!!')
+};
+// hace la petición al servidor
+request.send();
+
+</script>
