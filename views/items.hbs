@@ -18,7 +18,7 @@ function viz(data){
   var svg = d3.select('#viz')
     .append('svg') // agrega un elemento SVG
     .attr('width', 1500) // al SVG le agrega el atributo ancho de 400px
-    .attr('height', 1000) // al SVG le agrega el atributo alto de 200px
+    .attr('height', 3000) // al SVG le agrega el atributo alto de 200px
 
   var elem = svg.selectAll('g') // selecciona todos los elementos `g` (grupos)
     .data(data) // enlaza los datos del servidor
@@ -27,7 +27,7 @@ function viz(data){
   var elemEnter = elem.enter()
       .append('g') // agrega un grupo
       .attr('transform', function(d,i){ // aplica una transformación al elemento
-        return "translate("+(80*i+60)+", 80)" // calcula la posción relativo a
+        return "translate(80,"+(300*i+60)+")" // calcula la posción relativo a
                                               // los datos
       })
       // el elemeEnter es el grupo y le voy pidendo cositas
@@ -44,7 +44,7 @@ var txt = elemEnter.append('text')
   var taglist = ''
   tags.forEach (function (tag){
     taglist = taglist + tag.name + ', '
-    
+
   })
   return taglist
 })
